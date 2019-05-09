@@ -49,16 +49,34 @@ class Window(Frame):
         exit()
 
 
-root = Tk()
-root.geometry("410x400")
-drawer = Canvas(root, width=400, height=390, bg='black')
-drawer.pack()
-app = Window(root)
-
-
 def new_box(x_left, y_left, x_right, y_right, fill_in):
     drawer.create_rectangle(x_left, y_left, x_right, y_right, fill=fill_in)
 
+
+def callback(event):
+    mouse_x = event.x
+    mouse_y = event.y
+    flip_lights(mouse_x, mouse_y)
+
+
+def flip_lights(x_in, y_in):
+    for box in app.box_list3:
+        if box[0] < x_in < box[2] and box[1] < y_in < box[3]:
+            if box[4] == 'yellow':
+                box.pop(4)
+                box.append('white')
+            else:
+                box.pop(4)
+                box.append('yellow')
+            # TODO flip_lights function has issues with tuple attributes.  trying to rewrite box[4] the color.
+
+
+root = Tk()
+root.geometry("410x400")
+drawer = Canvas(root, width=400, height=390, bg='black')
+drawer.bind("<Button-1>", callback)
+drawer.pack()
+app = Window(root)
 
 for i in range(app.buttons_per_side):
     for j in range(app.buttons_per_side):
