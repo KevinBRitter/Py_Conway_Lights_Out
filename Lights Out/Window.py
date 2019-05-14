@@ -50,9 +50,9 @@ class Window(Frame):
         self.master.config(menu=menu_group)
 
         file = Menu(menu_group)
-        file.add_command(label='New', command=self.client_exit)
-        file.add_command(label='Load', command=self.client_exit)
-        file.add_command(label='Save', command=self.client_exit)
+        file.add_command(label='New', command=self.new_game)
+        file.add_command(label='Load', command=self.load_game)
+        file.add_command(label='Save', command=self.save_game)
         file.add_command(label='Exit', command=self.client_exit)
 
         edit = Menu(menu_group)
@@ -66,6 +66,25 @@ class Window(Frame):
     def client_exit():
 
         exit()
+
+    @staticmethod
+    def new_game():
+        for box in range(len(app.box_list3)):
+            app.box_list3[box] = (app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
+                                  app.box_list3[box][3], 'yellow')
+
+            new_box(app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
+                    app.box_list3[box][3], app.box_list3[box][4])
+
+    @staticmethod
+    def load_game():
+        # TODO create a load game method to recover a saved game state
+        exit()  # temp code place holder
+
+    @staticmethod
+    def save_game():
+        # TODO create a save state to save games between plays
+        exit()  # temp code place holder
 
 
 def new_box(x_left, y_left, x_right, y_right, fill_in):
