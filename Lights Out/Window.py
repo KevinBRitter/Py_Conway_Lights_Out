@@ -7,11 +7,15 @@ class Window(Frame):
         Frame.__init__(self, master)
 
         self.master = master
-        self.x_start = 10
-        self.y_start = 10
+        self.window_width = 400
+        self.window_height = 390
+        self.x_gap = 10
+        self.y_gap = 10
         self.color = 'white'
         self.buttons_per_side = 10
         self.gaps = self.buttons_per_side + 1
+        self.box_width = (self.window_width - self.gaps * self.x_gap) / self.buttons_per_side
+        self.box_height = (self.window_height - self.gaps * self.x_gap) / self.buttons_per_side
         self.list_length = self.buttons_per_side * self.buttons_per_side
         self.box_list1 = [] * self.list_length
         self.box_list2 = [] * self.list_length
@@ -20,7 +24,22 @@ class Window(Frame):
             self.box_list1.append(True)
             self.box_list2.append(self.color)
 
+        self.build_list(self)
         self.init_window()
+
+    @staticmethod
+    def build_list(self):
+        for i in range(self.buttons_per_side):
+            for j in range(self.buttons_per_side):
+                new_width = self.box_width
+                new_height = self.box_height
+                new_x_left = (j + 1) * self.x_gap + j * new_width
+                new_y_left = (i + 1) * self.y_gap + i * new_height
+                new_x_right = (j + 1) * self.x_gap + (j + 1) * new_width
+                new_y_right = (i + 1) * self.y_gap + (i + 1) * new_height
+                new_draw = (new_x_left, new_y_left, new_x_right, new_y_right, "yellow")
+
+                self.box_list3.append(new_draw)
 
     def init_window(self):
 
@@ -60,15 +79,26 @@ def callback(event):
 
 
 def flip_lights(x_in, y_in):
-    for box in app.box_list3:
-        if box[0] < x_in < box[2] and box[1] < y_in < box[3]:
-            if box[4] == 'yellow':
-                box.pop(4)
-                box.append('white')
+    for box in range(len(app.box_list3)):
+        if (app.box_list3[box][0] < x_in < app.box_list3[box][2] and
+                app.box_list3[box][1] < y_in < app.box_list3[box][3]) or \
+                (app.box_list3[box][0] < x_in - app.box_width - app.x_gap < app.box_list3[box][2] and
+                 app.box_list3[box][1] < y_in < app.box_list3[box][3]) or \
+                (app.box_list3[box][0] < x_in + app.box_width + app.x_gap < app.box_list3[box][2] and
+                 app.box_list3[box][1] < y_in < app.box_list3[box][3]) or \
+                (app.box_list3[box][0] < x_in < app.box_list3[box][2] and
+                 app.box_list3[box][1] < y_in - app.box_height - app.y_gap < app.box_list3[box][3]) or \
+                (app.box_list3[box][0] < x_in < app.box_list3[box][2] and
+                 app.box_list3[box][1] < y_in + app.box_height + app.y_gap < app.box_list3[box][3]):
+            if app.box_list3[box][4] == 'yellow':
+                app.box_list3[box] = (app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
+                                      app.box_list3[box][3], 'white')
             else:
-                box.pop(4)
-                box.append('yellow')
-            # TODO flip_lights function has issues with tuple attributes.  trying to rewrite box[4] the color.
+                app.box_list3[box] = (app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
+                                      app.box_list3[box][3], 'yellow')
+
+        new_box(app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
+                app.box_list3[box][3], app.box_list3[box][4])
 
 
 root = Tk()
@@ -77,18 +107,6 @@ drawer = Canvas(root, width=400, height=390, bg='black')
 drawer.bind("<Button-1>", callback)
 drawer.pack()
 app = Window(root)
-
-for i in range(app.buttons_per_side):
-    for j in range(app.buttons_per_side):
-        new_width = (400 - app.gaps * app.x_start)/app.buttons_per_side
-        new_height = (390 - app.gaps * app.x_start) / app.buttons_per_side
-        new_x_left = j * app.x_start + app.x_start + j * new_width
-        new_y_left = i * app.x_start + app.x_start + i * new_height
-        new_x_right = j * app.x_start + app.x_start + j * new_width + new_width
-        new_y_right = i * app.x_start + app.x_start + i * new_height + new_height
-        new_draw = (new_x_left, new_y_left, new_x_right, new_y_right, "yellow")
-
-        app.box_list3.append(new_draw)
 
 for k in app.box_list3:
     # print(k)
