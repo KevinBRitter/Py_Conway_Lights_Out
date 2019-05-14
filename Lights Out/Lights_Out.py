@@ -1,7 +1,7 @@
 from tkinter import*
 
 
-class Window(Frame):
+class LightsOut(Frame):
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
@@ -134,7 +134,7 @@ root.geometry("410x400")
 drawer = Canvas(root, width=400, height=390, bg='black')
 drawer.bind("<Button-1>", callback)
 drawer.pack()
-app = Window(root)
+app = LightsOut(root)
 
 # for k in app.box_list3:
 #     # print(k)
