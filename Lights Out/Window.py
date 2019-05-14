@@ -73,7 +73,7 @@ class Window(Frame):
             app.box_list3[box] = (app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
                                   app.box_list3[box][3], 'yellow')
 
-            new_box(app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
+            new_box(box, app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
                     app.box_list3[box][3], app.box_list3[box][4])
 
     @staticmethod
@@ -87,8 +87,15 @@ class Window(Frame):
         exit()  # temp code place holder
 
 
-def new_box(x_left, y_left, x_right, y_right, fill_in):
-    drawer.create_rectangle(x_left, y_left, x_right, y_right, fill=fill_in)
+def new_box(index_in, x_left, y_left, x_right, y_right, fill_in):
+    app.box_list2[index_in] = drawer.create_rectangle(x_left, y_left, x_right, y_right, fill=fill_in)
+
+
+def re_draw(index_in):
+    drawer.delete(app.box_list2[index_in])
+    app.box_list2[index_in] = drawer.create_rectangle(app.box_list3[index_in][0], app.box_list3[index_in][1],
+                                                      app.box_list3[index_in][2], app.box_list3[index_in][3],
+                                                      fill=app.box_list3[index_in][4])
 
 
 def callback(event):
@@ -116,8 +123,10 @@ def flip_lights(x_in, y_in):
                 app.box_list3[box] = (app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
                                       app.box_list3[box][3], 'yellow')
 
-        new_box(app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
-                app.box_list3[box][3], app.box_list3[box][4])
+        # new_box(app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
+        #         app.box_list3[box][3], app.box_list3[box][4])
+
+        re_draw(box)
 
 
 root = Tk()
@@ -127,7 +136,7 @@ drawer.bind("<Button-1>", callback)
 drawer.pack()
 app = Window(root)
 
-for k in app.box_list3:
-    # print(k)
-    new_box(k[0], k[1], k[2], k[3], k[4])
+# for k in app.box_list3:
+#     # print(k)
+#     new_box(k[0], k[1], k[2], k[3], k[4])
 root.mainloop()
