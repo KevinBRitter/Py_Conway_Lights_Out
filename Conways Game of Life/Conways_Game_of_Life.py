@@ -1,5 +1,4 @@
 from tkinter import*
-from time import sleep
 
 
 class Conways(Frame):
@@ -9,12 +8,12 @@ class Conways(Frame):
 
         self.master = master
         self.conways = False
-        self.window_width = 400
-        self.window_height = 390
-        self.x_gap = 10
-        self.y_gap = 10
-        self.color = 'white'
-        self.buttons_per_side = 10
+        self.window_width = 600
+        self.window_height = 590
+        self.x_gap = 2
+        self.y_gap = 2
+        self.color = 'blue'
+        self.buttons_per_side = 40
         self.gaps = self.buttons_per_side + 1
         self.box_width = (self.window_width - self.gaps * self.x_gap) / self.buttons_per_side
         self.box_height = (self.window_height - self.gaps * self.x_gap) / self.buttons_per_side
@@ -80,7 +79,7 @@ class Conways(Frame):
     def new_game():
         for box in range(len(app.box_list3)):
             app.box_list3[box] = (app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
-                                  app.box_list3[box][3], 'yellow')
+                                  app.box_list3[box][3], 'red')
 
             new_box(box, app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
                     app.box_list3[box][3], app.box_list3[box][4])
@@ -97,12 +96,11 @@ class Conways(Frame):
 
     @staticmethod
     def start_animation():
-        # TODO create an animation method to run conways rules
         change_conways_state(True)
+        right_click(None)
 
     @staticmethod
     def stop_animation():
-        # TODO create an animation method to run conways rules
         change_conways_state(False)
 
 
@@ -117,46 +115,52 @@ def re_draw(index_in):
                                                       fill=app.box_list3[index_in][4])
 
 
-def callback(event):
+def left_click(event):
     mouse_x = event.x
     mouse_y = event.y
     flip_lights(mouse_x, mouse_y)
+
+
+def right_click(event):
+    app.conways = True
+    # for num in range(10):
+    while app.conways:
+        app.after(200)
+        run_conways()
+        app.update()
 
 
 def flip_lights(x_in, y_in):
     for box in range(len(app.box_list3)):
         if (app.box_list3[box][0] < x_in < app.box_list3[box][2] and
                 app.box_list3[box][1] < y_in < app.box_list3[box][3]):
-            if app.box_list3[box][4] == 'yellow':
+            if app.box_list3[box][4] == 'red':
                 app.box_list3[box] = (app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
-                                      app.box_list3[box][3], 'white')
+                                      app.box_list3[box][3], 'blue')
             else:
                 app.box_list3[box] = (app.box_list3[box][0], app.box_list3[box][1], app.box_list3[box][2],
-                                      app.box_list3[box][3], 'yellow')
+                                      app.box_list3[box][3], 'red')
 
         re_draw(box)
 
 
 def change_conways_state(bool_in):
     app.conways = bool_in
-    run_conways()
 
 
 def run_conways():
-    count = 0
-    while app.conways:
-        for cell in range(len(app.box_list3)):
-            app.box_list4[cell] = life_evaluator(cell)
+    for cell in range(len(app.box_list3)):
+        app.box_list4[cell] = life_evaluator(cell)
 
-        for cell in range(len(app.box_list3)):
+    for cell in range(len(app.box_list3)):
+        if app.box_list3[cell][4] != app.box_list4[cell]:
             app.box_list3[cell] = (app.box_list3[cell][0], app.box_list3[cell][1], app.box_list3[cell][2],
                                    app.box_list3[cell][3], app.box_list4[cell])
 
             re_draw(cell)
 
-        # TODO this time delay is lagging out the screen.
-        # app.after(100)
-        count += 1
+    # TODO this time delay is lagging out the screen.
+    # app.after(500)
 
 
 def life_evaluator(index_in):
@@ -167,77 +171,84 @@ def life_evaluator(index_in):
     # Check West
     if index_in - 1 > -1 and index_in % app.buttons_per_side != 0:
         # If there is a cell 'left of' and it's not on the right wall, making them non adjacent
-        if app.box_list3[index_in - 1][4] == 'yellow':
+        if app.box_list3[index_in - 1][4] == 'red':
             # If that cell is also alive
             live_neighbors += 1
 
     # Check North West
     if index_in - app.buttons_per_side - 1 > -1 and index_in % app.buttons_per_side != 0:
         # If there is a cell above left
-        if app.box_list3[index_in - app.buttons_per_side - 1][4] == 'yellow':
+        if app.box_list3[index_in - app.buttons_per_side - 1][4] == 'red':
             # If that cell is also alive
             live_neighbors += 1
 
     # Check North
     if index_in - app.buttons_per_side > -1:
         # If there is a cell above
-        if app.box_list3[index_in - app.buttons_per_side][4] == 'yellow':
+        if app.box_list3[index_in - app.buttons_per_side][4] == 'red':
             # If that cell is also alive
             live_neighbors += 1
 
     # Check North East
     if index_in - app.buttons_per_side + 1 > -1 and (index_in + 1) % app.buttons_per_side != 0:
         # If there is a cell above right
-        if app.box_list3[index_in - app.buttons_per_side + 1][4] == 'yellow':
+        if app.box_list3[index_in - app.buttons_per_side + 1][4] == 'red':
             # If that cell is also alive
             live_neighbors += 1
 
     # Check East
     if index_in + 1 < app.list_length and (index_in + 1) % app.buttons_per_side != 0:
         # if there is a cell 'right of' and it's not on the left wall, making them non adjacent
-        if app.box_list3[index_in + 1][4] == 'yellow':
+        if app.box_list3[index_in + 1][4] == 'red':
             # If that cell is also alive
             live_neighbors += 1
 
     # Check South West
     if index_in + app.buttons_per_side - 1 < app.list_length and index_in % app.buttons_per_side != 0:
         # If there is a cell below left
-        if app.box_list3[index_in + app.buttons_per_side - 1][4] == 'yellow':
+        if app.box_list3[index_in + app.buttons_per_side - 1][4] == 'red':
             # If that cell is also alive
             live_neighbors += 1
 
     # Check South
     if index_in + app.buttons_per_side < app.list_length:
         # If there is a cell below
-        if app.box_list3[index_in + app.buttons_per_side][4] == 'yellow':
+        if app.box_list3[index_in + app.buttons_per_side][4] == 'red':
             # If that cell is also alive
             live_neighbors += 1
 
     # Check South East
     if index_in + app.buttons_per_side + 1 < app.list_length and (index_in + 1) % app.buttons_per_side != 0:
         # If there is a cell below left
-        if app.box_list3[index_in + app.buttons_per_side + 1][4] == 'yellow':
+        if app.box_list3[index_in + app.buttons_per_side + 1][4] == 'red':
             # If that cell is also alive
             live_neighbors += 1
 
     if live_neighbors >= 4:
-        return 'white'
+        return 'blue'
     elif live_neighbors == 3:
-        return 'yellow'
+        return 'red'
     elif live_neighbors == 2:
-        if app.box_list3[index_in][4] == 'yellow':
-            return 'yellow'
+        if app.box_list3[index_in][4] == 'red':
+            return 'red'
         else:
-            return 'white'
+            return 'blue'
     else:
-        return 'white'
+        return 'blue'
 
 
+# root is the master for the tkinter
 root = Tk()
-root.geometry("410x400")
-drawer = Canvas(root, width=400, height=390, bg='black')
-drawer.bind("<Button-1>", callback)
+root.geometry("610x600")
+
+# drawer is the new canvas using root(master)
+drawer = Canvas(root, width=600, height=590, bg='black')
+# add mouse click as an input to the canvas
+drawer.bind("<Button-1>", left_click)
+drawer.bind("<Button-3>", right_click)
+# pack adds the canvas to the window
 drawer.pack()
 app = Conways(root)
 
 root.mainloop()
+root.destroy()
