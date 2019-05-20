@@ -96,12 +96,13 @@ class Conways(Frame):
 
     @staticmethod
     def start_animation():
-        change_conways_state(True)
+        change_conways_state(False)
         right_click(None)
 
     @staticmethod
     def stop_animation():
-        change_conways_state(False)
+        change_conways_state(True)
+        right_click(None)
 
 
 def new_box(index_in, x_left, y_left, x_right, y_right, fill_in):
@@ -122,10 +123,13 @@ def left_click(event):
 
 
 def right_click(event):
-    app.conways = True
+    if app.conways:
+        app.conways = False
+    else:
+        app.conways = True
     # for num in range(10):
     while app.conways:
-        app.after(200)
+        app.after(50)
         run_conways()
         app.update()
 
